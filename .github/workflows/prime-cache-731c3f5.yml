@@ -1,4 +1,4 @@
-name: CI with Cache
+name: CI with Cache (prime cache-731c3f5)
 
 on:
   push:
@@ -12,6 +12,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ensure there is something to save in the cache on the first run
+      - name: Create cache dir and prime content
+        run: |
+          mkdir -p ~/.cache/pip
+          echo "prime-cache-731c3f5" > ~/.cache/pip/prime-731c3f5.txt
+
       - name: Cache Python dependencies
         id: cache-deps
         uses: actions/cache@v4
@@ -20,4 +26,15 @@ jobs:
           key: cache-731c3f5
 
       - name: prime-cache-731c3f5
-        run: echo "Cache result: ${{ steps.cache-deps.outputs.cache-hit }}"
+        run: |
+          echo "Cache result: ${{ steps.cache-deps.outputs.cache-hit }}"
+          # show saved file (if present)
+          ls -la ~/.cache/pip || true
+
+      - name: Install deps (simulated)
+        run: |
+          # install something minimal to exercise pip cache (if you have requirements.txt)
+          python -m pip install --upgrade pip
+          # This step is optional — if you have requirements.txt, use:
+          # pip install -r requirements.txt
+          echo "done"
