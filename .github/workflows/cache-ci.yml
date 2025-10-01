@@ -1,0 +1,23 @@
+name: CI with Cache
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Python dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: cache-731c3f5
+
+      - name: prime-cache-731c3f5
+        run: echo "Cache result: ${{ steps.cache-deps.outputs.cache-hit }}"
